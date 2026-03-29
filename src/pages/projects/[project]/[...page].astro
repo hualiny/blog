@@ -40,8 +40,8 @@ const { page } = Astro.props
 const { project } = Astro.params
 
 const meta = {
-  description: `View all posts in project - ${project}`,
-  title: `Project: ${project}`
+  description: `查看 ${project} 项目下的所有文章`,
+  title: `项目: ${project}`
 }
 
 const paginationProps = {
@@ -65,7 +65,7 @@ const paginationProps = {
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>
       <h1 class='mb-6 flex items-end gap-x-2 text-3xl font-medium'>
-        Project:
+        项目：
         <span class='text-2xl'>#{project}</span>
       </h1>
       <p class='text-muted-foreground'>共 {page.data.length} 篇文章</p>
