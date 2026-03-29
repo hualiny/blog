@@ -1,0 +1,54 @@
+---
+import { getBlogCollection } from 'astro-pure/server'
+import { Icon } from 'astro-pure/user'
+import ProjectCard from './ProjectCard.astro'
+
+const allPosts = await getBlogCollection()
+
+// 按 project 分组
+const projects = allPosts.reduce((acc, post) => {
+  const projectKey = post.data.project
+  if (!projectKey) return acc
+  
+  if (!acc[projectKey]) {
+    acc[projectKey] = []
+  }
+  acc[projectKey].push(post)
+  return acc
+}, {} as Record<string, any[]>)
+
+// 转换为数组并排序
+const projectList = Object.entries(projects)
+  .map(([name, posts]) => ({
+    name,
+    slug: name,
+    count: posts.length,
+    posts: posts.slice(0, 3)
+  }))
+  .sort((a, b) => b.count - a.count)
+---
+
+{
+  projectList.length > 0 ? (
+    <div class="grid gap-8 md:grid-cols-2">
+      {projectList.map((project) => (
+        <ProjectCard
+          heading={project.name}
+          subheading={`共 ${project.count} 篇文章`}
+          href={`/projects/${project.slug}`}
+          class="h-full"
+        >
+          <div class="text-sm text-muted-foreground mt-2">
+            点击查看全部文章 →
+          </div>
+        </ProjectCard>
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20 text-muted-foreground">
+      <Icon name="github" class="size-16 mx-auto mb-6 opacity-40" />
+      <p class="text-xl">暂无项目</p>
+      <p class="mt-2">在文章 frontmatter 中添加 project 字段即可在这里展示</p>
+    </div>
+  )
+}

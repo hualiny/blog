@@ -1,0 +1,81 @@
+---
+import type { GetStaticPaths, Page } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+
+import { Paginator, PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import config from '@/site-config'
+
+export const prerender = true
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const allPosts = await getBlogCollection()
+  const allPostsByDate = sortMDByDate(allPosts)
+
+  // 找出所有唯一的 project
+  const uniqueProjects = new Set(
+    allPostsByDate
+      .filter(post => post.data.project)
+      .map(post => post.data.project)
+  )
+
+  const projects = Array.from(uniqueProjects)
+
+  return projects.flatMap((project) => {
+    const filterPosts = allPostsByDate.filter((post) => post.data.project === project)
+    return paginate(filterPosts, {
+      pageSize: config.content.blogPageSize,
+      params: { project }
+    })
+  })
+}
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>
+}
+
+const { page } = Astro.props
+const { project } = Astro.params
+
+const meta = {
+  description: `View all posts in project - ${project}`,
+  title: `Project: ${project}`
+}
+
+const paginationProps = {
+  ...(page.url.prev && {
+    prevUrl: {
+      text: `← Previous`,
+      url: page.url.prev
+    }
+  }),
+  ...(page.url.next && {
+    nextUrl: {
+      text: `Next →`,
+      url: page.url.next
+    }
+  })
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Back' href='/projects' variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-6 flex items-end gap-x-2 text-3xl font-medium'>
+        Project:
+        <span class='text-2xl'>#{project}</span>
+      </h1>
+      <p class='text-muted-foreground'>共 {page.data.length} 篇文章</p>
+    </div>
+
+    <section id='content' class='animate' aria-label='Project post list'>
+      <ul class='flex flex-col gap-y-3 text-start'>
+        {page.data.map((post) => <PostPreview {post} detailed />)}
+      </ul>
+      <Paginator {...paginationProps} />
+    </section>
+  </main>
+</PageLayout>
