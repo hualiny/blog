@@ -1,5 +1,5 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
-import vercel from '@astrojs/vercel'
+// import vercel from '@astrojs/vercel'
 import AstroPureIntegration from 'astro-pure'
 import { defineConfig, fontProviders } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
@@ -22,24 +22,27 @@ import {
 } from './src/plugins/shiki-official/transformers.ts'
 import config from './src/site.config.ts'
 
+// 构建时可通过环境变量覆盖（GitHub Actions / Cloudflare Pages）
+const siteUrl = process.env.SITE_URL?.trim() || 'https://astro-pure.js.org'
+const basePath = process.env.BASE_PATH?.trim() || '/'
+
 // https://astro.build/config
 export default defineConfig({
   // [Basic]
-  site: 'https://astro-pure.js.org',
-  // Deploy to a sub path
+  site: siteUrl,
+  // Deploy to a sub path（例如 GitHub Project Pages：BASE_PATH=/blog）
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
-  // base: '/astro-pure/',
+  base: basePath === '/' ? undefined : basePath,
   trailingSlash: 'never',
   // root: './my-project-directory',
   server: { host: true },
 
   // [Adapter]
   // https://docs.astro.build/en/guides/deploy/
-  adapter: vercel({ imageService: true }),
-  output: 'server',
-  // Local (standalone)
-  // adapter: node({ mode: 'standalone' }),
+  // GitHub Pages / Cloudflare Pages 使用静态导出；Vercel SSR 时恢复下面两行并改 output
+  // adapter: vercel({ imageService: true }),
   // output: 'server',
+  output: 'static',
 
   // [Assets]
   image: {

@@ -15,12 +15,11 @@
     "lint": "eslint --fix 'src/**/*.{js,ts,jsx,tsx,astro}'",
     "yijiansilian": "bun lint && bun sync && bun check && bun format",
     "clean": "rm -rf .astro .vercel dist",
-    "cache:avatars": "tsx preset/scripts/cacheAvatars.ts"
+    "cache:avatars": "bun ./scripts/cacheAvatars.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
     "@astrojs/rss": "^4.0.15",
-    "@astrojs/vercel": "^9.0.4",
     "@waline/client": "^3.12.2",
     "astro": "^5.17.3",
     "astro-pure": "1.4.1",
