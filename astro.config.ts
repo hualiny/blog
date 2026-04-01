@@ -22,6 +22,8 @@ import {
 } from './src/plugins/shiki-official/transformers.ts'
 import config from './src/site.config.ts'
 
+import cloudflare from '@astrojs/cloudflare';
+
 // 构建时可通过环境变量覆盖（GitHub Actions / Cloudflare Pages）
 const siteUrl = process.env.SITE_URL?.trim() || 'https://astro-pure.js.org'
 const basePath = process.env.BASE_PATH?.trim() || '/'
@@ -30,10 +32,13 @@ const basePath = process.env.BASE_PATH?.trim() || '/'
 export default defineConfig({
   // [Basic]
   site: siteUrl,
+
   // Deploy to a sub path（例如 GitHub Project Pages：BASE_PATH=/blog）
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   base: basePath === '/' ? undefined : basePath,
+
   trailingSlash: 'never',
+
   // root: './my-project-directory',
   server: { host: true },
 
@@ -136,5 +141,7 @@ export default defineConfig({
         subsets: ['latin']
       }
     ]
-  }
+  },
+
+  adapter: cloudflare()
 })
