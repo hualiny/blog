@@ -39,3 +39,9 @@ ignore.*
 bunfig.toml
 /src/content/blog/test.*
 /test/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

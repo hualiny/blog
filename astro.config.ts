@@ -22,7 +22,7 @@ import {
 } from './src/plugins/shiki-official/transformers.ts'
 import config from './src/site.config.ts'
 
-import cloudflare from '@astrojs/cloudflare';
+import cloudflare from "@astrojs/cloudflare";
 
 // 构建时可通过环境变量覆盖（GitHub Actions / Cloudflare Pages）
 const siteUrl = process.env.SITE_URL?.trim() || 'https://astro-pure.js.org'
